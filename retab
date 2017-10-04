@@ -3,32 +3,38 @@
 
 spacesPerTab=0
 
-while IFS= read -r line 
-	numSpaces = echo $line | sed -e 's?\( *\).*$?\1?' | awk '{ print length }'
-	if [ $spacesPerTab -eq 0 ]
-	then
-		if [ $numSpaces -ne 0 ]
-			then
-			spacesPerTab=$numSpaces
-		else
-			continue;
-		fi
-	fi
-
-	if [ numSpaces -eq 0 ] #if there's no spaces, we give up
-		then continue
-	fi
-
-	numTabs=(( numSpaces/spacesPerTab ))
- 
-	insertTabs=$'\t'
-
-	for (( i = 1; i < numTabs; i++ ))
+{
+	while IFS= read -r line 
 	do
-		insertTabs=$insertTabs"$"'\t'
-	done
+		echo "$line"
+		numSpaces="$(echo "$line" | sed -e 's?\( *\).*$?\1?' | awk '{ print length }')"
+		echo $numSpaces
+		if [ "$spacesPerTab" == "0" ]
+		then
+			if [ "$numSpaces" != "0" ]
+				then
+				spacesPerTab=$numSpaces
+			else
+				echo "$line"
+				continue;
+			fi
+		fi
 
-	sed -i 's? *?'"$insertTabs"'?' 
+		if [ "$numSpaces" == "0" ] #if there's no spaces, we give up
+			then continue
+		fi
+
+		(( numtabs = numSpaces/spacesPerTab ))
+	 
+		insertTabs=$'\t'
+
+		for (( i = 1; i < numTabs; i++ ))
+		do
+			insertTabs=$insertTabs"$"'\t'
+		done
+
+		echo "$line" | sed 's? *?'"$insertTabs"'?' >
 
 
-done < cat $1 
+	done < "$1"
+} > "$2"
