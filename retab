@@ -1,0 +1,23 @@
+#!/bin/bash
+
+
+spacesPerTab=0
+
+while IFS= read -r line 
+	numSpaces = echo $line | sed -e 's?\( *\).*$?\1?' | awk '{ print length }'
+	if [ $spacesPerTab -eq 0 ]
+	then
+		if [ $numSpaces -ne 0 ]
+			then
+			spacesPerTab=$numSpaces
+		else
+			continue;
+		fi
+	fi
+
+	numTabs=(( numSpaces/spacesPerTab ))
+	
+	sed -i 's? *?' 
+
+
+done < cat $1 
