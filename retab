@@ -15,9 +15,20 @@ while IFS= read -r line
 		fi
 	fi
 
+	if [ numSpaces -eq 0 ] #if there's no spaces, we give up
+		then continue
+	fi
+
 	numTabs=(( numSpaces/spacesPerTab ))
-	
-	sed -i 's? *?' 
+ 
+	insertTabs=$'\t'
+
+	for (( i = 1; i < numTabs; i++ ))
+	do
+		insertTabs=$insertTabs"$"'\t'
+	done
+
+	sed -i 's? *?'"$insertTabs"'?' 
 
 
 done < cat $1 
