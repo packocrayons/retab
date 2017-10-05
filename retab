@@ -1,14 +1,12 @@
 #!/bin/bash
-
-
 spacesPerTab=0
 
 {
-	while IFS= read -r line 
+while IFS= read -r line 
 	do
-		echo "$line"
+		# Debug echo "$line"
 		numSpaces="$(echo "$line" | sed -e 's?\( *\).*$?\1?' | awk '{ print length }')"
-		echo $numSpaces
+		# debug echo $numSpaces
 		if [ "$spacesPerTab" == "0" ]
 		then
 			if [ "$numSpaces" != "0" ]
@@ -21,7 +19,9 @@ spacesPerTab=0
 		fi
 
 		if [ "$numSpaces" == "0" ] #if there's no spaces, we give up
-			then continue
+			then 
+			echo "$line"
+			continue
 		fi
 
 		(( numtabs = numSpaces/spacesPerTab ))
@@ -33,8 +33,10 @@ spacesPerTab=0
 			insertTabs=$insertTabs"$"'\t'
 		done
 
-		echo "$line" | sed 's? *?'"$insertTabs"'?' >
+		echo "$line" | sed 's? *?'"$insertTabs"'?' 
 
 
-	done < "$1"
-} > "$2"
+done < "$1"
+} > "/tmp/retab.tmp"
+
+mv "/tmp/retab.tmp" "$1"
