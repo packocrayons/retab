@@ -1,6 +1,17 @@
 #!/bin/bash
 spacesPerTab=0
 
+if [ "$1" -eq "-h" ]
+then
+	echo <<EOF
+	Retab changes spaces to tabs because some people think spaces are acceptable.
+
+	usage : retab FILENAME [NEWFILE]
+
+	filename will be modified in place unless newfile is provided
+EOF
+fi
+
 {
 while IFS= read -r line 
 	do
@@ -39,4 +50,10 @@ while IFS= read -r line
 done < "$1"
 } > "/tmp/retab.tmp"
 
-mv "/tmp/retab.tmp" "$1"
+if [[ "$2" -eq $NULL ]]
+	then
+	mv "/tmp/retab.tmp" "$1"
+else
+	mv "/tmp/retab.tmp" "$2"
+fi
+

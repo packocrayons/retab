@@ -2,6 +2,8 @@
 
 Use tabs instead of spaces or the wrath of retab will find you
 
-Takes one argument - the filename to retab:
+## Usage:
+    
+    retab FILENAME [NEWFILE]
 
-    retab /my/professor/cannot/write/labs.txt
+If no new file is provided, it will be modified in place.
