@@ -1,7 +1,7 @@
 #!/bin/bash
 spacesPerTab=0
 
-if [ "$1" -eq "-h" ]
+if [ "$1" = "-h" ]
 then
 	echo <<EOF
 	Retab changes spaces to tabs because some people think spaces are acceptable.
@@ -10,6 +10,7 @@ then
 
 	filename will be modified in place unless newfile is provided
 EOF
+exit 0
 fi
 
 {
