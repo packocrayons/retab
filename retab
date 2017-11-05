@@ -1,27 +1,34 @@
 #!/bin/bash
-spacesPerTab=0
+spacesPerTab=0 #starts as a flag
 
-if [ "$1" = "-h" ]
+if [ "$1" = "-h" ] #Help argument
 then
-	echo <<EOF
-	Retab changes spaces to tabs because some people think spaces are acceptable.
+	cat <<EOF
+Retab changes spaces to tabs because some people think spaces are acceptable. (They aren't and they suck please don't use them)
 
-	usage : retab FILENAME [NEWFILE]
+usage : retab FILENAME [NEWFILE]
 
-	filename will be modified in place unless newfile is provided
+filename will be modified in place unless newfile is provided
 EOF
-exit 0
+exit 0 #exit successfully
+fi
+
+if [ ! -f "$1" ] #if it's not a regular file
+	then
+	echo "$1 does not exist"
+	exit 1 #exit with error
 fi
 
 {
 while IFS= read -r line 
 	do
-		# Debug echo "$line"
-		numSpaces="$(echo "$line" | sed -e 's?\( *\).*$?\1?' | awk '{ print length }')"
-		# debug echo $numSpaces
-		if [ "$spacesPerTab" == "0" ]
+		# echo "$line" #Debug code
+		#The following sed script gets the number of spaces anchored at the from of the line ( *) is greedy and so is .*$, so it will (should) never fail
+		numSpaces="$(echo "$line" | sed -e 's?\( *\).*$?\1?' | awk '{ print length }')" # ? is sed delimeter (didn't want to have to excape backslash)
+		# echo $numSpaces #Debug code
+		if [ "$spacesPerTab" == "0" ] #If we haven't already found a solution
 		then
-			if [ "$numSpaces" != "0" ]
+			if [ "$numSpaces" != "0" ] #If this is an indented line, it's the first indented line (remember we haven't already found a solution)
 				then
 				spacesPerTab=$numSpaces
 			else
@@ -30,31 +37,31 @@ while IFS= read -r line
 			fi
 		fi
 
-		if [ "$numSpaces" == "0" ] #if there's no spaces, we give up
+		if [ "$numSpaces" == "0" ] #if there's no spaces, don't touch this line, just echo it
 			then 
 			echo "$line"
 			continue
 		fi
 
-		(( numtabs = numSpaces/spacesPerTab ))
+		(( numtabs = numSpaces/spacesPerTab )) #determine the number of tabs to insert
 	 
 		insertTabs=$'\t'
 
 		for (( i = 1; i < numTabs; i++ ))
 		do
-			insertTabs=$insertTabs"$"'\t'
+			insertTabs=$insertTabs"$"'\t' #insert that many tabs
 		done
 
-		echo "$line" | sed 's? *?'"$insertTabs"'?' 
+		echo "$line" | sed 's? *?'"$insertTabs"'?' #echo the rest of the line with the leading spaces removed
 
 
 done < "$1"
-} > "/tmp/retab.tmp"
+} > "/tmp/retab.tmp" #Echo it to a temp file - not the nicest way but it's quick and easy
 
 if [[ "$2" -eq $NULL ]]
 	then
-	mv "/tmp/retab.tmp" "$1"
+	mv "/tmp/retab.tmp" "$1" #If there isn't a new filename - replace the current filename (the first argument)
 else
-	mv "/tmp/retab.tmp" "$2"
+	mv "/tmp/retab.tmp" "$2" #move to the new filename
 fi
 
