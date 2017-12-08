@@ -45,14 +45,10 @@ while IFS= read -r line
 
 		(( numtabs = numSpaces/spacesPerTab )) #determine the number of tabs to insert
 	 
-		insertTabs=$'\t'
+		insertTabs=`printf '\t%.0s' $(seq $numtabs)` #Kinda a hack but it works since the previous for loop didn't due to scope
 
-		for (( i = 1; i < numTabs; i++ ))
-		do
-			insertTabs=$insertTabs"$"'\t' #insert that many tabs
-		done
 
-		echo "$line" | sed 's? *?'"$insertTabs"'?' #echo the rest of the line with the leading spaces removed
+		echo "$line" | sed 's/ */'"$insertTabs"'/' #echo the rest of the line with the leading spaces removed
 
 
 done < "$1"
