@@ -19,9 +19,18 @@ if [ ! -f "$1" ] #if it's not a regular file
 	exit 1 #exit with error
 fi
 
+tabMatch="^\t.*"
+
 {
 while IFS= read -r line 
 	do
+		
+		if [[ $line =~ $tabMatch ]] #if the line already starts with a tab, it's ignored completely
+			then
+			echo "$line"
+			continue;
+		fi
+
 		# echo "$line" #Debug code
 		#The following sed script gets the number of spaces anchored at the from of the line ( *) is greedy and so is .*$, so it will (should) never fail
 		numSpaces="$(echo "$line" | sed -e 's?\( *\).*$?\1?' | awk '{ print length }')" # ? is sed delimeter (didn't want to have to excape backslash)
@@ -36,6 +45,7 @@ while IFS= read -r line
 				continue;
 			fi
 		fi
+
 
 		if [ "$numSpaces" == "0" ] #if there's no spaces, don't touch this line, just echo it
 			then 
@@ -54,7 +64,7 @@ while IFS= read -r line
 done < "$1"
 } > "/tmp/retab.tmp" #Echo it to a temp file - not the nicest way but it's quick and easy
 
-if [[ "$2" -eq $NULL ]]
+if [ "$#" -lt 2 ]
 	then
 	mv "/tmp/retab.tmp" "$1" #If there isn't a new filename - replace the current filename (the first argument)
 else
