@@ -20,16 +20,24 @@ if [ ! -f "$1" ] #if it's not a regular file
 fi
 
 tabMatch="^\t.*"
+justaSpace="^ $"
 
 {
 while IFS= read -r line 
 	do
 		
+		if [[ $line =~ $justaSpace ]] #if it's just a space on an empty line, remove it (bonus points) and don't count it towards spacespertab (from experience this is annoying)
+			then
+			continue;
+		fi
+
 		if [[ $line =~ $tabMatch ]] #if the line already starts with a tab, it's ignored completely
 			then
 			echo "$line"
 			continue;
 		fi
+
+		
 
 		# echo "$line" #Debug code
 		#The following sed script gets the number of spaces anchored at the from of the line ( *) is greedy and so is .*$, so it will (should) never fail
