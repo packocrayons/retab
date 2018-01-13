@@ -28,6 +28,7 @@ while IFS= read -r line
 		
 		if [[ $line =~ $justaSpace ]] #if it's just a space on an empty line, remove it (bonus points) and don't count it towards spacespertab (from experience this is annoying)
 			then
+			echo "" #print just a newline - this is better than \n because some systems (I'm looking at you windows) are stupid and somebody would complain
 			continue;
 		fi
 
